@@ -12,7 +12,9 @@ use Ellaisys\Cognito\Auth\ChangePasswords;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
+
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Support\Facades\Validator;
 
 use Illuminate\Routing\Controller as BaseController;
 
@@ -120,11 +122,47 @@ class AuthController extends BaseController
     }
 
 
+	/**
+	 * Action to update the user password
+	 * 
+	 * @param  \Illuminate\Http\Request  $request
+	 */
     public function actionChangePassword(Request $request)
     {
-        if ($this->reset($request)) {
-            return redirect(route('home'))->with('success', true);
-        };
+		try
+		{
+            //Validate request
+            $validator = Validator::make($request->all(), [
+                'email'    => 'required|email',
+                'password'  => 'string|min:8',
+                'new_password' => 'required|confirmed|min:8',
+            ]);
+            $validator->validate();
+
+            // Get Current User
+            $userCurrent = auth()->guard('web')->user();
+
+            if ($this->reset($request)) {
+                return redirect(route('login'))->with('success', true);
+            } else {
+				return redirect()->back()
+					->with('status', 'error')
+					->with('message', 'Password updated failed');
+			} //End if
+        } catch(Exception $e) {
+			$message = 'Error sending the reset mail.';
+			if ($e instanceof ValidationException) {
+                $message = $e->errors();
+            } else if ($e instanceof CognitoIdentityProviderException) {
+				$message = $e->getAwsErrorMessage();
+			} else {
+                //Do nothing
+            } //End if
+
+			return redirect()->back()
+				->with('status', 'error')
+				->with('message', $message);
+        } //Try-catch ends
     }
 
 }

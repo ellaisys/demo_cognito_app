@@ -6,7 +6,7 @@ use Auth;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Request;
 
-use App\Models\User\User;
+use App\Models\User;
 use Ellaisys\Cognito\Auth\RegistersUsers;
 use Ellaisys\Cognito\Auth\SendsPasswordResetEmails;
 use Ellaisys\Cognito\Auth\ResetsPasswords;
@@ -29,11 +29,12 @@ class UserController extends BaseController
 
     public function webRegister(Request $request)
     {
+        $cognitoRegistered=false;
+
         $validator = $request->validate([
             'first_name' => 'required|max:255',
             'last_name' => 'required|max:255',
             'email' => 'required|email|max:64|unique:users',
-            'phone' => 'required|string|max:64',
             'password' => 'required|confirmed|min:6|max:64',
         ]);
 
@@ -44,22 +45,32 @@ class UserController extends BaseController
 
         //Create credentials object
         $collection = collect($request->all());
+        Log::info($collection);
 
-        //Register User
-        if ($cognitoRegistered=$this->createCognitoUser($collection)) {
+        //Register User in Cognito
+        $cognitoRegistered=$this->createCognitoUser($collection);
+        if ($cognitoRegistered==true) {
+            unset($data['password']);
             User::create($data);
+
+            //Send to login page
+            return view('auth.login');
+        } else {
+            return redirect()->back()
+            ->withInput()
+            ->with('status', 'error')
+            ->with('message', 'The given email exists')
+            ->withErrors(['email' => 'The email has already been taken.']);
         } //End if
-
-
-        return view('login');
-    }
+    } //Function ends
 
 
     public function sendPasswordResetEmail(Request $request)
     {
         //Method with SendsPasswordResetEmails trait
         if ($this->sendCognitoResetLinkEmail($request['email'])) {
-
+            //Send to reset page
+            return view('auth.passwords.reset');
         } //End if
     }
 
