@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
-use Illuminate\Foundation\Auth\VerifiesEmails;
+
+//use Illuminate\Foundation\Auth\VerifiesEmails; //Removed for AWS Cognito
+use Ellaisys\Cognito\Auth\VerifiesEmails; //Added for AWS Cognito
 
 class VerificationController extends Controller
 {

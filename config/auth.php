@@ -37,7 +37,11 @@ return [
 
     'guards' => [
         'web' => [
-            'driver' => 'session',
+            'driver' => 'cognito-session', // This line is important for using AWS Cognito as Web Driver
+            'provider' => 'users',
+        ],
+        'api' => [
+            'driver' => 'cognito-token', // This line is important for using AWS Cognito as API Driver
             'provider' => 'users',
         ],
     ],

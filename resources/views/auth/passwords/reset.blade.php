@@ -11,13 +11,20 @@
                     <form method="POST" action="{{ route('password.update') }}">
                         @csrf
 
-                        <input type="hidden" name="token" value="{{ $token }}">
+                        @if(request()->has('code'))
+                            <input type="hidden" name="code" value="{{ request()->get('code') }}" />
+                        @elseif(request()->has('token'))
+                            <input type="hidden" name="token" value="{{ request()->get('token') }}" />
+                        @else
+                        @endif
 
                         <div class="row mb-3">
                             <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('E-Mail Address') }}</label>
 
                             <div class="col-md-6">
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ $email ?? old('email') }}" required autocomplete="email" autofocus>
+                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" 
+                                    value="{{ request()->has('email') ? request()->get('email') : old('email') }}"  
+                                    autocomplete="email" {{ request()->has('email') ? 'disabled' : 'required autofocus' }}/>
 
                                 @error('email')
                                     <span class="invalid-feedback" role="alert">

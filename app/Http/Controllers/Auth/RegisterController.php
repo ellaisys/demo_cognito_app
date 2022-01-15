@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use App\Models\User;
-use Illuminate\Foundation\Auth\RegistersUsers;
+
+//use Illuminate\Foundation\Auth\RegistersUsers; //Removed for AWS Cognito
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+
+use Ellaisys\Cognito\Auth\RegistersUsers; //Added for AWS Cognito
 
 class RegisterController extends Controller
 {
@@ -56,6 +59,7 @@ class RegisterController extends Controller
         ]);
     }
 
+    
     /**
      * Create a new user instance after a valid registration.
      *
@@ -64,10 +68,17 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
+        return User::create($data);
+    }
+
+
+    /**
+     * Get the post register / login redirect path.
+     *
+     * @return string
+     */
+    public function redirectPath()
+    {
+        return '/home';
     }
 }
