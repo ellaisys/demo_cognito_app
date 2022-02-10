@@ -6,6 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\ConfirmsPasswords;
 
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Support\Facades\Validator;
+
+use Exception;
+use Illuminate\Validation\ValidationException;
+use Ellaisys\Cognito\Exceptions\AwsCognitoException;
+use Ellaisys\Cognito\Exceptions\NoLocalUserException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Aws\CognitoIdentityProvider\Exception\CognitoIdentityProviderException;
+
 class ConfirmPasswordController extends Controller
 {
     /*
@@ -37,4 +47,5 @@ class ConfirmPasswordController extends Controller
     {
         $this->middleware('auth');
     }
+
 }

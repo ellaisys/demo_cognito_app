@@ -13,30 +13,27 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () { return view('welcome'); })->name('welcome');
-Route::middleware('auth')->get('home', function () { return view('home'); })->name('home');
+Route::get('/', function () {
+    return view('welcome');
+});
 
-Route::get('login', function () { return view('auth.login'); })->name('login');
-Route::post('login', 'AuthController@webLogin');
-Route::get('register', function () { return view('auth.register'); })->name('register');
-Route::post('register', 'User\UserController@webRegister')->name('register.form.action');
-
-Route::get('forgot', function () { return view('auth.passwords.email'); })->name('cognito.form.reset.password');
-Route::post('reset', 'User\UserController@sendPasswordResetEmail')->name('cognito.action.reset.password');
-Route::get('reset/code', function () { return view('auth.passwords.reset'); })->name('cognito.form.reset.password.code');
-Route::post('reset/code', 'User\UserController@actionResetPasswordCode')->name('cognito.action.reset.password.code');
-
-Route::middleware('auth')->get('user/changepass', function () { return view('auth.passwords.confirm'); })->name('cognito.form.change.password');
-Route::middleware('auth')->post('user/changepass', 'AuthController@actionChangePassword')->name('cognito.action.change.password');
-
-Route::middleware('auth')->any('logout', function () { 
-    Auth::guard()->logout();
-    return redirect('/');
-})->name('logout');
+Auth::routes();
 
 /**
- * Disable scaffolding routes
+ * Routes added below to manage the AWS Cognito change in case you are
+ * using Laravel Scafolling
  */
-//Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/login', function () { return view('auth.login'); })->name('login');
+Route::get('/register', function () { return view('auth.register'); })->name('register');
+Route::get('/password/forgot', function () { return view('auth.passwords.email'); })->name('password.request');
+Route::get('/password/reset', function () { return view('auth.passwords.reset'); })->name('cognito.form.reset.password.code');
+
+Route::middleware('aws-cognito')->get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::middleware('aws-cognito')->get('/password/change', function () { return view('auth.passwords.change'); })->name('cognito.form.change.password');
+Route::middleware('aws-cognito')->post('/password/change', [App\Http\Controllers\Auth\ChangePasswordController::class, 'actionChangePassword'])->name('cognito.action.change.password');
+Route::middleware('aws-cognito')->any('logout', function (\Illuminate\Http\Request $request) { 
+    Auth::guard()->logout();
+    $request->session()->invalidate();
+    return redirect('/');
+})->name('logout');
