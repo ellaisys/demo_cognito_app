@@ -59,8 +59,6 @@ class AuthController extends BaseController
         //Create credentials object
         $collection = collect($request->all());
 
-        
-
         if ($claim = $this->attemptLogin($collection, 'api', 'username', 'password', true)) {
 
             if ($claim instanceof AwsCognitoClaim) {
@@ -77,17 +75,18 @@ class AuthController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return bool
      */
-    protected function getRemoteUser($username)
+    protected function getRemoteUser()
     {
         try {
-            $response = Auth::guard()->user();
+            $response = auth()->guard('api')->user();
         } catch (NoLocalUserException $e) {
-            dd($e);
             $response = $this->createLocalUser($credentials);
+        } catch (Exception $e) {
+            return $e;
         }
 
         return $response;
-    }
+    } //Function ends
 
 
     public function webLogin(Request $request)
