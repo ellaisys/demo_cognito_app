@@ -4,6 +4,7 @@
     </IfModule>
 
     RewriteEngine On
+    RewriteBase /cognito/
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
