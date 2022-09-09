@@ -101,8 +101,9 @@ class AuthController extends BaseController
             if ($response===true) {
                 $request->session()->regenerate();
 
-                return redirect()
-                    ->intended('home');
+                return redirect(route('home'));
+
+                   // ->intended('home');
             } else if ($response===false) {
                 return redirect()
                     ->back()
