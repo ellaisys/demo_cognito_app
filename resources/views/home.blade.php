@@ -7,7 +7,7 @@
             <div class="card">
                 <div class="card-header">{{ __('Dashboard') }}</div>
 
-                <div class="card-body" style="height: calc(100vh - 150px);">
+                <div class="card-body">
                     @if (session('status'))
                         <div class="alert alert-success" role="alert">
                             {{ session('status') }}
@@ -19,6 +19,27 @@
 
                     <h2><strong>Welcome: {{ __('You are logged in!') }}</strong></h2>
                     <h4>This is a demo application, that uses the Laravel Package to manage Web and API authentication with AWS Cognito</h4>
+                
+                    </br>
+                    <h2><strong>Session Parameters:</strong></h2>
+                    @if ($sessionData = session()->all())
+                        <table class="table table-bordered table-striped">
+                            <thead class="dark">
+                                <tr>
+                                    <td style="width: 30%;">Key</td>
+                                    <td>Value</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($sessionData as $key=>$value)
+                                <tr>
+                                    <td style="word-break: break-word;">{{ $key }}</td>
+                                    <td style="word-break: break-word;">{{ json_encode($value, JSON_UNESCAPED_UNICODE)}}</td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    @endif
                 </div>
             </div>
         </div>

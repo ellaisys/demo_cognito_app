@@ -562,16 +562,16 @@
         },
         {
             "name": "ellaisys/aws-cognito",
-            "version": "v1.0.7",
+            "version": "v1.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ellaisys/aws-cognito.git",
-                "reference": "655fb3c2cc07284f442b49f489b84ca50cf3fac7"
+                "reference": "1bcb2c0abc7c2780b1d4eea3f9423d1b3fc34175"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ellaisys/aws-cognito/zipball/655fb3c2cc07284f442b49f489b84ca50cf3fac7",
-                "reference": "655fb3c2cc07284f442b49f489b84ca50cf3fac7",
+                "url": "https://api.github.com/repos/ellaisys/aws-cognito/zipball/1bcb2c0abc7c2780b1d4eea3f9423d1b3fc34175",
+                "reference": "1bcb2c0abc7c2780b1d4eea3f9423d1b3fc34175",
                 "shasum": ""
             },
             "require": {
@@ -627,9 +627,9 @@
             "support": {
                 "email": "support@ellaisys.com",
                 "issues": "https://github.com/ellaisys/aws-cognito/issues",
-                "source": "https://github.com/ellaisys/aws-cognito/tree/v1.0.7"
+                "source": "https://github.com/ellaisys/aws-cognito/tree/v1.0.8"
             },
-            "time": "2022-07-17T11:59:56+00:00"
+            "time": "2022-09-09T13:39:53+00:00"
         },
         {
             "name": "fruitcake/laravel-cors",
@@ -7937,5 +7937,5 @@
         "php": "^7.3|^8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.1.0"
 }
