@@ -34,6 +34,5 @@ Route::middleware('aws-cognito')->get('/password/change', function () { return v
 Route::middleware('aws-cognito')->post('/password/change', [App\Http\Controllers\Auth\ChangePasswordController::class, 'actionChangePassword'])->name('cognito.action.change.password');
 Route::middleware('aws-cognito')->any('logout', function (\Illuminate\Http\Request $request) { 
     Auth::guard()->logout();
-    $request->session()->invalidate();
     return redirect('/');
 })->name('logout');
