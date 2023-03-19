@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Ellaisys\Cognito\AwsCognitoClaim;
 use Ellaisys\Cognito\Auth\AuthenticatesUsers;
 use Ellaisys\Cognito\Auth\ChangePasswords;
+use Ellaisys\Cognito\Auth\RegisterMFA;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -27,6 +28,8 @@ class AuthController extends BaseController
 {
     use AuthenticatesUsers;
     use ChangePasswords;
+    use RegisterMFA;
+    
 
     public function register(Request $request)
     {
@@ -51,7 +54,7 @@ class AuthController extends BaseController
 
         return $this->registered($request, $user)
             ?: redirect($this->redirectPath());
-    }
+    } //Function ends
 
 
     public function login(Request $request)
@@ -67,7 +70,7 @@ class AuthController extends BaseController
                 return $claim;
             } //End if
         }
-    }
+    } //Function ends
 
     /**
      * Attempt to log the user into the application.
@@ -119,7 +122,7 @@ class AuthController extends BaseController
             $response = $this->sendFailedLoginResponse($collection, $e);
             return $response->back()->withInput($request->only('username', 'remember'));
         } //try-catch ends
-    }
+    } //Function ends
 
 
 	/**
@@ -163,6 +166,189 @@ class AuthController extends BaseController
 				->with('status', 'error')
 				->with('message', $message);
         } //Try-catch ends
-    }
+    } //Function ends
 
-}
+
+	/**
+	 * Action to activate MFA for the 
+	 * 
+	 * @param  \Illuminate\Http\Request  $request
+	 */
+    public function actionApiActivateMFA(Request $request)
+    {
+		try
+		{
+            return $this->activateMFA('api');
+        } catch(Exception $e) {
+			$message = 'Error activating the MFA.';
+			if ($e instanceof ValidationException) {
+                $message = $e->errors();
+            } else if ($e instanceof CognitoIdentityProviderException) {
+				$message = $e->getAwsErrorMessage();
+			} else {
+                //Do nothing
+            } //End if
+
+			throw $e;
+        } //Try-catch ends
+    } //Function ends
+
+
+	/**
+	 * Action to deactivate MFA for the 
+	 * 
+	 * @param  \Illuminate\Http\Request  $request
+	 */
+    public function actionApiDeactivateMFA(Request $request)
+    {
+		try
+		{
+            return $this->deactivateMFA('api');
+        } catch(Exception $e) {
+			$message = 'Error activating the MFA.';
+			if ($e instanceof ValidationException) {
+                $message = $e->errors();
+            } else if ($e instanceof CognitoIdentityProviderException) {
+				$message = $e->getAwsErrorMessage();
+			} else {
+                //Do nothing
+            } //End if
+
+			throw $e;
+        } //Try-catch ends
+    } //Function ends
+
+
+	/**
+	 * Action to enable MFA for the user
+	 * 
+	 * @param  \Illuminate\Http\Request  $request
+	 */
+    public function actionApiEnableMFA(Request $request, string $paramUsername='username')
+    {
+		try
+		{
+            return $this->enableMFA('api', $request[$paramUsername]);
+        } catch(Exception $e) {
+			$message = 'Error activating the MFA.';
+			if ($e instanceof ValidationException) {
+                $message = $e->errors();
+            } else if ($e instanceof CognitoIdentityProviderException) {
+				$message = $e->getAwsErrorMessage();
+			} else {
+                //Do nothing
+            } //End if
+
+			throw $e;
+        } //Try-catch ends
+    } //Function ends
+
+
+	/**
+	 * Action to disable MFA for the user
+	 * 
+	 * @param  \Illuminate\Http\Request  $request
+	 */
+    public function actionApiDisableMFA(Request $request, string $paramUsername='username')
+    {
+		try
+		{
+            return $this->disableMFA('api', $request[$paramUsername]);
+        } catch(Exception $e) {
+			$message = 'Error activating the MFA.';
+			if ($e instanceof ValidationException) {
+                $message = $e->errors();
+            } else if ($e instanceof CognitoIdentityProviderException) {
+				$message = $e->getAwsErrorMessage();
+			} else {
+                //Do nothing
+            } //End if
+
+			throw $e;
+        } //Try-catch ends
+    } //Function ends
+
+
+	/**
+	 * Verify the MFA user code
+	 * 
+	 * @param  \Illuminate\Http\Request  $request
+	 */
+    public function actionApiVerifyMFA(Request $request, string $code)
+    {
+		try
+		{
+            return $this->verifyMFA('api', $code);
+        } catch(Exception $e) {
+			$message = 'Error activating the MFA.';
+			if ($e instanceof ValidationException) {
+                $message = $e->errors();
+            } else if ($e instanceof CognitoIdentityProviderException) {
+				$message = $e->getAwsErrorMessage();
+			} else {
+                //Do nothing
+            } //End if
+
+			throw $e;
+        } //Try-catch ends
+    } //Function ends
+
+
+	/**
+	 * Verify the MFA user code
+	 * 
+	 * @param  \Illuminate\Http\Request  $request
+	 */
+    public function actionWebVerifyMFA(Request $request)
+    {
+		try
+		{
+            return $this->verifyMFA('web', $code);
+        } catch(Exception $e) {
+			$message = 'Error activating the MFA.';
+			if ($e instanceof ValidationException) {
+                $message = $e->errors();
+            } else if ($e instanceof CognitoIdentityProviderException) {
+				$message = $e->getAwsErrorMessage();
+			} else {
+                //Do nothing
+            } //End if
+
+			throw $e;
+        } //Try-catch ends
+    } //Function ends
+
+
+    public function webLoginMFA(Request $request)
+    {
+        try
+        {
+            //Create credentials object
+            $collection = collect($request->all());
+
+            $response = $this->attemptLoginMFA($request);
+
+            if ($response===true) {
+                $request->session()->regenerate();
+
+                return redirect(route('home'));
+
+                   // ->intended('home');
+            } else if ($response===false) {
+                return redirect()
+                    ->back()
+                    ->withInput($request->only('username', 'remember'))
+                    ->withErrors([
+                        'username' => 'Incorrect username and/or password !!',
+                    ]);
+            } else {
+                return $response;
+            } //End if
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            $response = $this->sendFailedLoginResponse($collection, $e);
+            return $response->back()->withInput($request->only('username', 'remember'));
+        } //try-catch ends
+    } //Function ends
+
+} //Class ends

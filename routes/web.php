@@ -25,6 +25,8 @@ Auth::routes();
  */
 
 Route::get('/login', function () { return view('auth.login'); })->name('login');
+Route::get('/login/mfa', function () { return view('auth.login_mfa_code'); })->name('cognito.form.mfa.code');
+Route::post('/login/mfa', [App\Http\Controllers\AuthController::class, 'webLoginMFA'])->name('cognito.form.mfa.code');
 Route::get('/register', function () { return view('auth.register'); })->name('register');
 Route::get('/password/forgot', function () { return view('auth.passwords.email'); })->name('password.request');
 Route::get('/password/reset', function () { return view('auth.passwords.reset'); })->name('cognito.form.reset.password.code');
