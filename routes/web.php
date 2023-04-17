@@ -38,3 +38,7 @@ Route::middleware('aws-cognito')->any('logout', function (\Illuminate\Http\Reque
     Auth::guard()->logout();
     return redirect('/');
 })->name('logout');
+Route::middleware('aws-cognito')->any('logout/forced', function (\Illuminate\Http\Request $request) { 
+    Auth::guard()->logout(true);
+    return redirect('/');
+})->name('logout_forced');

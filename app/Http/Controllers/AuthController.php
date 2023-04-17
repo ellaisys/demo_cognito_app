@@ -28,7 +28,7 @@ class AuthController extends BaseController
 {
     use AuthenticatesUsers;
     use ChangePasswords;
-    use RegisterMFA;
+    //use RegisterMFA;
     
 
     public function register(Request $request)
@@ -348,6 +348,27 @@ class AuthController extends BaseController
             Log::error($e->getMessage());
             $response = $this->sendFailedLoginResponse($collection, $e);
             return $response->back()->withInput($request->only('username', 'remember'));
+        } //try-catch ends
+    } //Function ends
+
+
+    public function apiLoginMFA(Request $request)
+    {
+        try
+        {
+            //Create credentials object
+            $collection = collect($request->all());
+            $claim = $this->attemptLoginMFA($request, 'api', true);
+
+            if ($claim instanceof AwsCognitoClaim) {
+                return $claim->getData();
+            } else {
+                return $claim;
+            } //End if
+
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            return $e;
         } //try-catch ends
     } //Function ends
 

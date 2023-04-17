@@ -71,6 +71,16 @@
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                         @csrf
                                     </form>
+
+                                    <a class="dropdown-item" href="{{ route('logout_forced') }}"
+                                       onclick="event.preventDefault();
+                                                     document.getElementById('logout-form-forced').submit();">
+                                        {{ __('Logout (Forced)') }}
+                                    </a>
+
+                                    <form id="logout-form-forced" action="{{ route('logout_forced') }}" method="POST" class="d-none">
+                                        @csrf
+                                    </form>
                                 </div>
                             </li>
                         @endguest
