@@ -28,7 +28,7 @@ class AuthController extends BaseController
 {
     use AuthenticatesUsers;
     use ChangePasswords;
-    //use RegisterMFA;
+    use RegisterMFA;
     
 
     public function register(Request $request)
