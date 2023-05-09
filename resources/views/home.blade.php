@@ -45,4 +45,34 @@
         </div>
     </div>
 </div>
+
+    @if ($dataActivation = session()->get('dataActivation'))
+        <div class="modal fade" tabindex="-1" role="dialog" id="modalMFAActivate" aria-labelledby="modalMFAActivate" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Activation QR Code</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="flex-fill font-regular text-nowrap">
+                            <small>Key: {{ $dataActivation['SecretCode'] }}</small>
+                        </div>
+                        <div class="flex-fill">
+                            <img src="{{ $dataActivation['SecretCodeQR'] }}" class="mx-auto d-block img-thumbnail" />
+                        </div>
+                        <div class="flex-fill"><a href="{{ $dataActivation['TotpUri'] }}" target="_blank">TOTP Link</a></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            var modalMFAActivate = new bootstrap.Modal(document.getElementById('modalMFAActivate'), {keyboard: false});
+            modalMFAActivate.show();
+        </script>
+    @endif
 @endsection

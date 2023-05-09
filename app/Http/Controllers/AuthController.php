@@ -81,7 +81,8 @@ class AuthController extends BaseController
     protected function getRemoteUser()
     {
         try {
-            $response = auth()->guard('api')->user();
+            $user =  auth()->guard('api')->user();
+            $response = auth()->guard()->getRemoteUserData($user['email']);
         } catch (NoLocalUserException $e) {
             $response = $this->createLocalUser($credentials);
         } catch (Exception $e) {
