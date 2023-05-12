@@ -46,7 +46,7 @@
     </div>
 </div>
 
-    @if ($dataActivation = session()->get('dataActivation'))
+    @if ($actionActivateMFA = session()->get('actionActivateMFA'))
         <div class="modal fade" tabindex="-1" role="dialog" id="modalMFAActivate" aria-labelledby="modalMFAActivate" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -56,12 +56,12 @@
                     </div>
                     <div class="modal-body">
                         <div class="flex-fill font-regular text-nowrap">
-                            <small>Key: {{ $dataActivation['SecretCode'] }}</small>
+                            <small>Key: {{ $actionActivateMFA['SecretCode'] }}</small>
                         </div>
                         <div class="flex-fill">
-                            <img src="{{ $dataActivation['SecretCodeQR'] }}" class="mx-auto d-block img-thumbnail" />
+                            <img src="{{ $actionActivateMFA['SecretCodeQR'] }}" class="mx-auto d-block img-thumbnail" />
                         </div>
-                        <div class="flex-fill"><a href="{{ $dataActivation['TotpUri'] }}" target="_blank">TOTP Link</a></div>
+                        <div class="flex-fill"><a href="{{ $actionActivateMFA['TotpUri'] }}" target="_blank">TOTP Link</a></div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Close</button>

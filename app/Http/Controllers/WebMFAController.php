@@ -39,8 +39,14 @@ class WebMFAController extends BaseController
     {
 		try
 		{
+            $user = auth()->guard('web')->user();
             $response = $this->activateMFA();
-            return back()->with('dataActivation', $response);
+            $userCognito = auth()->guard('web')->getRemoteUserData($user->email);
+
+            //Return status to screen
+            return back()
+                ->with('user', $userCognito->toArray())
+                ->with('actionActivateMFA', $response);
 
         } catch(Exception $e) {
 			$message = 'Error activating the MFA.';
@@ -66,7 +72,14 @@ class WebMFAController extends BaseController
     {
 		try
 		{
-            return $this->deactivateMFA();
+            $user = auth()->guard('web')->user();
+            $response = $this->deactivateMFA();
+            $userCognito = auth()->guard('web')->getRemoteUserData($user->email);
+
+            //Return status to screen
+            return back()
+                ->with('user', $userCognito->toArray())
+                ->with('actionDeactivateMFA', $response);
         } catch(Exception $e) {
 			$message = 'Error activating the MFA.';
 			if ($e instanceof ValidationException) {
@@ -93,8 +106,14 @@ class WebMFAController extends BaseController
 		{
             $user = auth()->guard('web')->user();
             $response = $this->enableMFA('web', $user->email);
+            $userCognito = auth()->guard('web')->getRemoteUserData($user->email);
 
-            dd($response);
+            //Return status to screen
+            return back()
+                ->with('user', $userCognito->toArray())
+                ->with('actionEnableMFA', [
+                    'status' => $response['@metadata']['statusCode']==200
+                ]);
         } catch(Exception $e) {
 			$message = 'Error activating the MFA.';
 			if ($e instanceof ValidationException) {
@@ -121,8 +140,14 @@ class WebMFAController extends BaseController
 		{
             $user = auth()->guard('web')->user();
             $response = $this->disableMFA('web', $user->email);
+            $userCognito = auth()->guard('web')->getRemoteUserData($user->email);
 
-            dd($response);
+            //Return status to screen
+            return back()
+                ->with('user', $userCognito->toArray())
+                ->with('actionDisableMFA', [
+                    'status' => $response['@metadata']['statusCode']==200
+                ]);
         } catch(Exception $e) {
 			$message = 'Error activating the MFA.';
 			if ($e instanceof ValidationException) {
