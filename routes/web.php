@@ -38,7 +38,7 @@ Route::middleware('aws-cognito')->post('/password/change', [App\Http\Controllers
 Route::middleware('aws-cognito')->get('/mfa/enable', [App\Http\Controllers\WebMFAController::class, 'actionEnableMFA'])->name('cognito.action.mfa.enable');
 Route::middleware('aws-cognito')->get('/mfa/disable', [App\Http\Controllers\WebMFAController::class, 'actionDisableMFA'])->name('cognito.action.mfa.disable');
 Route::middleware('aws-cognito')->get('/mfa/activate', [App\Http\Controllers\WebMFAController::class, 'actionActivateMFA'])->name('cognito.action.mfa.activate');
-Route::middleware('aws-cognito')->get('/mfa/verify', [App\Http\Controllers\WebMFAController::class, 'actionVerifyMFA'])->name('cognito.action.mfa.verify');
+Route::middleware('aws-cognito')->post('/mfa/verify', [App\Http\Controllers\WebMFAController::class, 'actionVerifyMFA'])->name('cognito.action.mfa.verify');
 
 Route::middleware('aws-cognito')->any('logout', function (\Illuminate\Http\Request $request) { 
     Auth::guard()->logout();

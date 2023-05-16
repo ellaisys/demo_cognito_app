@@ -24,7 +24,7 @@ use Ellaisys\Cognito\Exceptions\AwsCognitoException;
 use Ellaisys\Cognito\Exceptions\NoLocalUserException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class AuthController extends BaseController
+class ApiAuthController extends BaseController
 {
     use AuthenticatesUsers;
     use ChangePasswords;
@@ -57,7 +57,10 @@ class AuthController extends BaseController
     } //Function ends
 
 
-    public function login(Request $request)
+    /**
+     * 
+     */
+    public function actionLogin(Request $request)
     {
         //Create credentials object
         $collection = collect($request->all());
@@ -71,6 +74,7 @@ class AuthController extends BaseController
             } //End if
         }
     } //Function ends
+
 
     /**
      * Attempt to log the user into the application.
@@ -90,39 +94,6 @@ class AuthController extends BaseController
         }
 
         return $response;
-    } //Function ends
-
-
-    public function webLogin(Request $request)
-    {
-        try
-        {
-            //Create credentials object
-            $collection = collect($request->all());
-
-            $response = $this->attemptLogin($collection, 'web');
-
-            if ($response===true) {
-                $request->session()->regenerate();
-
-                return redirect(route('home'));
-
-                   // ->intended('home');
-            } else if ($response===false) {
-                return redirect()
-                    ->back()
-                    ->withInput($request->only('username', 'remember'))
-                    ->withErrors([
-                        'username' => 'Incorrect username and/or password !!',
-                    ]);
-            } else {
-                return $response;
-            } //End if
-        } catch (Exception $e) {
-            Log::error($e->getMessage());
-            $response = $this->sendFailedLoginResponse($collection, $e);
-            return $response->back()->withInput($request->only('username', 'remember'));
-        } //try-catch ends
     } //Function ends
 
 

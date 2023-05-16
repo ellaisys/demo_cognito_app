@@ -23,29 +23,23 @@ use Ellaisys\Cognito\Exceptions\AwsCognitoException;
 use Ellaisys\Cognito\Exceptions\NoLocalUserException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class WebMFAController extends BaseController
+class ApiMFAController extends BaseController
 {
     use AuthenticatesUsers;
     use RegisterMFA;
+
+
 
 	/**
 	 * Action to activate MFA for the 
 	 * 
 	 * @param  \Illuminate\Http\Request  $request
 	 */
-    public function actionActivateMFA(Request $request)
+    public function actionApiActivateMFA(Request $request)
     {
 		try
 		{
-            $user = auth()->guard('web')->user();
-            $response = $this->activateMFA();
-            $userCognito = auth()->guard('web')->getRemoteUserData($user->email);
-
-            //Return status to screen
-            return back()
-                ->with('user', $userCognito->toArray())
-                ->with('actionActivateMFA', $response);
-
+            return $this->activateMFA('api');
         } catch(Exception $e) {
 			$message = 'Error activating the MFA.';
 			if ($e instanceof ValidationException) {
@@ -66,18 +60,11 @@ class WebMFAController extends BaseController
 	 * 
 	 * @param  \Illuminate\Http\Request  $request
 	 */
-    public function actionDeactivateMFA(Request $request)
+    public function actionApiDeactivateMFA(Request $request)
     {
 		try
 		{
-            $user = auth()->guard('web')->user();
-            $response = $this->deactivateMFA();
-            $userCognito = auth()->guard('web')->getRemoteUserData($user->email);
-
-            //Return status to screen
-            return back()
-                ->with('user', $userCognito->toArray())
-                ->with('actionDeactivateMFA', $response);
+            return $this->deactivateMFA('api');
         } catch(Exception $e) {
 			$message = 'Error activating the MFA.';
 			if ($e instanceof ValidationException) {
@@ -98,20 +85,11 @@ class WebMFAController extends BaseController
 	 * 
 	 * @param  \Illuminate\Http\Request  $request
 	 */
-    public function actionEnableMFA(Request $request)
+    public function actionApiEnableMFA(Request $request, string $paramUsername='username')
     {
 		try
 		{
-            $user = auth()->guard('web')->user();
-            $response = $this->enableMFA('web', $user->email);
-            $userCognito = auth()->guard('web')->getRemoteUserData($user->email);
-
-            //Return status to screen
-            return back()
-                ->with('user', $userCognito->toArray())
-                ->with('actionEnableMFA', [
-                    'status' => $response['@metadata']['statusCode']==200
-                ]);
+            return $this->enableMFA('api', $request[$paramUsername])->toArray();
         } catch(Exception $e) {
 			$message = 'Error activating the MFA.';
 			if ($e instanceof ValidationException) {
@@ -132,20 +110,11 @@ class WebMFAController extends BaseController
 	 * 
 	 * @param  \Illuminate\Http\Request  $request
 	 */
-    public function actionDisableMFA(Request $request)
+    public function actionApiDisableMFA(Request $request, string $paramUsername='username')
     {
 		try
 		{
-            $user = auth()->guard('web')->user();
-            $response = $this->disableMFA('web', $user->email);
-            $userCognito = auth()->guard('web')->getRemoteUserData($user->email);
-
-            //Return status to screen
-            return back()
-                ->with('user', $userCognito->toArray())
-                ->with('actionDisableMFA', [
-                    'status' => $response['@metadata']['statusCode']==200
-                ]);
+            return $this->disableMFA('api', $request[$paramUsername])->toArray();
         } catch(Exception $e) {
 			$message = 'Error activating the MFA.';
 			if ($e instanceof ValidationException) {
@@ -166,23 +135,11 @@ class WebMFAController extends BaseController
 	 * 
 	 * @param  \Illuminate\Http\Request  $request
 	 */
-    public function actionVerifyMFA(Request $request)
+    public function actionApiVerifyMFA(Request $request, string $code)
     {
 		try
 		{
-            $code = $request['code'];
-            $deviceName = $request['device_name'];
-
-            $user = auth()->guard('web')->user();
-            $response = $this->verifyMFA('web', $code, $deviceName);
-            $userCognito = auth()->guard('web')->getRemoteUserData($user->email);
-
-            //Return status to screen
-            return back()
-                ->with('user', $userCognito->toArray())
-                ->with('actionVerifyMFA', [
-                    'status' => true
-                ]);
+            return $this->verifyMFA('api', $code);
         } catch(Exception $e) {
 			$message = 'Error activating the MFA.';
 			if ($e instanceof ValidationException) {
@@ -190,17 +147,16 @@ class WebMFAController extends BaseController
             } else if ($e instanceof CognitoIdentityProviderException) {
 				$message = $e->getAwsErrorMessage();
 			} else {
-                $message = $e->getMessage();
+                //Do nothing
             } //End if
 
-			return back()
-                ->with('actionVerifyMFA', $message);
+			throw $e;
         } //Try-catch ends
     } //Function ends
 
 
     /**
-     * Authenticate using the MFA code using the Web console
+     * Authenticate using the MFA code using the API console
      */
     public function actionValidateMFA(Request $request)
     {
@@ -208,27 +164,18 @@ class WebMFAController extends BaseController
         {
             //Create credentials object
             $collection = collect($request->all());
+            $claim = $this->attemptLoginMFA($request, 'api', true);
 
-            //Authenticate the user request
-            $response = $this->attemptLoginMFA($request);
-            if ($response===true) {
-                $request->session()->regenerate();
-                return redirect(route('home'));
-            } else if ($response===false) {
-                return redirect()
-                    ->back()
-                    ->withInput($request->only('username', 'remember'))
-                    ->withErrors([
-                        'username' => 'Incorrect username and/or password !!',
-                    ]);
+            if ($claim instanceof AwsCognitoClaim) {
+                return $claim->getData();
             } else {
-                return $response;
+                return $claim;
             } //End if
+
         } catch (Exception $e) {
             Log::error($e->getMessage());
-            $response = $this->sendFailedLoginResponse($collection, $e);
-            return $response->back()->withInput($request->only('username', 'remember'));
+            return $e;
         } //try-catch ends
     } //Function ends
-
+    
 } //Class ends
