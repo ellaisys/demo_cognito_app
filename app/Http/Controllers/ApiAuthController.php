@@ -58,7 +58,7 @@ class ApiAuthController extends BaseController
 
 
     /**
-     * 
+     * Login action for the API based approach.
      */
     public function actionLogin(Request $request)
     {

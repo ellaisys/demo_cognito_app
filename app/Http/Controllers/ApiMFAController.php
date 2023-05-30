@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Auth;
 use Illuminate\Support\Facades\Log;
-use Symfony\Component\HttpFoundation\Request;
+use Illuminate\Http\Request;
 
 use Ellaisys\Cognito\AwsCognitoClaim;
 use Ellaisys\Cognito\Auth\AuthenticatesUsers;
@@ -31,11 +31,9 @@ class ApiMFAController extends BaseController
 
 
 	/**
-	 * Action to activate MFA for the 
-	 * 
-	 * @param  \Illuminate\Http\Request  $request
+	 * Action to activate MFA
 	 */
-    public function actionApiActivateMFA(Request $request)
+    public function actionApiActivateMFA()
     {
 		try
 		{

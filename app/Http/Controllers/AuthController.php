@@ -56,22 +56,7 @@ class AuthController extends BaseController
             ?: redirect($this->redirectPath());
     } //Function ends
 
-
-    public function login(Request $request)
-    {
-        //Create credentials object
-        $collection = collect($request->all());
-
-        if ($claim = $this->attemptLogin($collection, 'api', 'username', 'password', true)) {
-
-            if ($claim instanceof AwsCognitoClaim) {
-                return $claim->getData();
-            } else {
-                return $claim;
-            } //End if
-        }
-    } //Function ends
-
+    
     /**
      * Attempt to log the user into the application.
      *
