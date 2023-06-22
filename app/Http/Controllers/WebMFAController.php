@@ -30,10 +30,8 @@ class WebMFAController extends BaseController
 
 	/**
 	 * Action to activate MFA for the 
-	 * 
-	 * @param  \Illuminate\Http\Request  $request
 	 */
-    public function actionActivateMFA(Request $request)
+    public function actionActivateMFA()
     {
 		try
 		{
@@ -63,10 +61,8 @@ class WebMFAController extends BaseController
 
 	/**
 	 * Action to deactivate MFA for the 
-	 * 
-	 * @param  \Illuminate\Http\Request  $request
 	 */
-    public function actionDeactivateMFA(Request $request)
+    public function actionDeactivateMFA()
     {
 		try
 		{
@@ -95,10 +91,8 @@ class WebMFAController extends BaseController
 
 	/**
 	 * Action to enable MFA for the user
-	 * 
-	 * @param  \Illuminate\Http\Request  $request
 	 */
-    public function actionEnableMFA(Request $request)
+    public function actionEnableMFA()
     {
 		try
 		{
@@ -129,10 +123,8 @@ class WebMFAController extends BaseController
 
 	/**
 	 * Action to disable MFA for the user
-	 * 
-	 * @param  \Illuminate\Http\Request  $request
 	 */
-    public function actionDisableMFA(Request $request)
+    public function actionDisableMFA()
     {
 		try
 		{

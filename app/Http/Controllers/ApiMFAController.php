@@ -54,11 +54,9 @@ class ApiMFAController extends BaseController
 
 
 	/**
-	 * Action to deactivate MFA for the 
-	 * 
-	 * @param  \Illuminate\Http\Request  $request
+	 * Action to deactivate MFA for the user
 	 */
-    public function actionApiDeactivateMFA(Request $request)
+    public function actionApiDeactivateMFA()
     {
 		try
 		{
