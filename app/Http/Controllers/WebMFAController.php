@@ -104,7 +104,7 @@ class WebMFAController extends BaseController
             return back()
                 ->with('user', $userCognito->toArray())
                 ->with('actionEnableMFA', [
-                    'status' => $response['@metadata']['statusCode']==200
+                    'message' => $response
                 ]);
         } catch(Exception $e) {
 			$message = 'Error activating the MFA.';
