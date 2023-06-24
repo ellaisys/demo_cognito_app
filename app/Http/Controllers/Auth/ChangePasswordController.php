@@ -72,7 +72,7 @@ class ChangePasswordController extends Controller
             $userCurrent = auth()->guard('web')->user();
 
             if ($this->reset($request)) {
-                auth()->guard()->logout();
+                auth()->guard()->logout(true);
                 $request->session()->invalidate();
 
                 return redirect(route('login'))->with('success', true);

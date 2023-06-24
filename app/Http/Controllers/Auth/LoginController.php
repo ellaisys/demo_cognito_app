@@ -60,12 +60,17 @@ class LoginController extends Controller
                 if ($response===true) {
                     $request->session()->regenerate();
 
-                    return redirect(route('home'))->with('success', true);
+                    return redirect(route('home'));
+    
+                       // ->intended('home');
                 } else if ($response===false) {
-                    // If the login attempt was unsuccessful you may increment the number of attempts
-                    // to login and redirect the user back to the login form. Of course, when this
-                    // user surpasses their maximum number of attempts they will get locked out.
-                    //
+                    return redirect()
+                        ->back()
+                        ->withInput($request->only('username', 'remember'))
+                        ->withErrors([
+                            'username' => 'Incorrect username and/or password !!',
+                        ]);
+
                     //$this->incrementLoginAttempts($request);
                     //
                     //$this->sendFailedLoginResponse($collection, null);

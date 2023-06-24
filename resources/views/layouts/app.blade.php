@@ -10,7 +10,7 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -61,7 +61,18 @@
                                     <a class="dropdown-item" href="{{ route('cognito.form.change.password') }}">
                                         {{ __('Change Password') }}
                                     </a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="{{ route('cognito.action.mfa.activate') }}" data-toggle="modal" data-target="#modalMFAActivate">
+                                        {{ __('Activate MFA') }}
+                                    </a>
+                                    <a class="dropdown-item" href="{{ route('cognito.action.mfa.enable') }}">
+                                        {{ __('Enable MFA') }}
+                                    </a>
 
+                                    <a class="dropdown-item" href="{{ route('cognito.action.mfa.disable') }}">
+                                        {{ __('Disable MFA') }}
+                                    </a>
+                                    <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
@@ -69,6 +80,16 @@
                                     </a>
 
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                        @csrf
+                                    </form>
+
+                                    <a class="dropdown-item" href="{{ route('logout_forced') }}"
+                                       onclick="event.preventDefault();
+                                                     document.getElementById('logout-form-forced').submit();">
+                                        {{ __('Logout (Forced)') }}
+                                    </a>
+
+                                    <form id="logout-form-forced" action="{{ route('logout_forced') }}" method="POST" class="d-none">
                                         @csrf
                                     </form>
                                 </div>
