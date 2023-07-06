@@ -832,16 +832,16 @@
         },
         {
             "name": "ellaisys/aws-cognito",
-            "version": "v1.0.10",
+            "version": "v1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ellaisys/aws-cognito.git",
-                "reference": "02e78ec9d0da75f33ff5140ffa1c5d5179f830ef"
+                "reference": "03b3e539f7574d1a6d67133fd5e07bd9f5fb8c80"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ellaisys/aws-cognito/zipball/02e78ec9d0da75f33ff5140ffa1c5d5179f830ef",
-                "reference": "02e78ec9d0da75f33ff5140ffa1c5d5179f830ef",
+                "url": "https://api.github.com/repos/ellaisys/aws-cognito/zipball/03b3e539f7574d1a6d67133fd5e07bd9f5fb8c80",
+                "reference": "03b3e539f7574d1a6d67133fd5e07bd9f5fb8c80",
                 "shasum": ""
             },
             "require": {
@@ -860,9 +860,7 @@
                     ],
                     "aliases": []
                 },
-                "branch-alias": {
-                    "dev-master": "1.0-dev"
-                }
+                "branch-alias": []
             },
             "autoload": {
                 "psr-4": {
@@ -897,9 +895,9 @@
             "support": {
                 "email": "support@ellaisys.com",
                 "issues": "https://github.com/ellaisys/aws-cognito/issues",
-                "source": "https://github.com/ellaisys/aws-cognito/tree/v1.0.10"
+                "source": "https://github.com/ellaisys/aws-cognito/tree/v1.1.1"
             },
-            "time": "2022-12-17T18:56:45+00:00"
+            "time": "2023-06-23T20:40:10+00:00"
         },
         {
             "name": "fruitcake/laravel-cors",
