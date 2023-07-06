@@ -1,0 +1,6 @@
+version = 0.1
+[default.deploy.parameters]
+stack_name="demo-aws-cognito"
+region="ap-south-1"
+confirm_changeset=true
+cababilities="CABILITIES_IAM"
