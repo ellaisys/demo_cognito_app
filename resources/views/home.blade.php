@@ -14,7 +14,7 @@
                         </div>
                     @endif
 
-                    <img src="https://cdn.ellaisys.com/aws-cognito/banner.png" 
+                    <img src="https://github.com/ellaisys/aws-cognito/raw/master/assets/images/banner.png" 
                         width="100%" alt="EllaiSys AWS Cloud Capability"/>
 
                     <h2><strong>Welcome: {{ __('You are logged in!') }}</strong></h2>
