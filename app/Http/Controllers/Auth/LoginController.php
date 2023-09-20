@@ -80,7 +80,9 @@ class LoginController extends Controller
             } //End if
         } catch(Exception $e) {
             Log::error($e->getMessage());
-            return $response->back()->withInput($request);
+            return $response->back()
+                ->withInput($request)
+                ->withErrors(['error' => $e->getMessage()]);
         } //Try-catch ends
 
     } //Function ends
