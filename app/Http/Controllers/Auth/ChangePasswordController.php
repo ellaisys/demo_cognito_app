@@ -63,15 +63,17 @@ class ChangePasswordController extends Controller
             //Validate request
             $validator = Validator::make($request->all(), [
                 'email'    => 'required|email',
-                'password'  => 'string|min:8',
-                'new_password' => 'required|confirmed|min:8',
+                'password'  => 'required',
+                'new_password' => 'required|confirmed',
             ]);
             $validator->validate();
 
             // Get Current User
             $userCurrent = auth()->guard('web')->user();
 
+            //Check the password
             if ($this->reset($request)) {
+                //Logout on success
                 auth()->guard()->logout(true);
                 $request->session()->invalidate();
 
@@ -84,7 +86,7 @@ class ChangePasswordController extends Controller
         } catch(Exception $e) {
 			$message = 'Error sending the reset mail.';
 			if ($e instanceof ValidationException) {
-                $message = $e->errors();
+                throw $e;
             } else if ($e instanceof CognitoIdentityProviderException) {
 				$message = $e->getAwsErrorMessage();
 			} else {
@@ -92,8 +94,10 @@ class ChangePasswordController extends Controller
             } //End if
 
 			return redirect()->back()
+                ->withInput($request->only('email'))
 				->with('status', 'error')
-				->with('message', $message);
+				->withErrors('errors', $message);
+
         } //Try-catch ends
     }
 }
