@@ -63,11 +63,19 @@ class AuthController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return bool
      */
-    protected function getRemoteUser()
+    protected function getRemoteUser(Request $request)
     {
         try {
             $user =  auth()->guard('api')->user();
             $response = auth()->guard()->getRemoteUserData($user['email']);
+
+            //Check if request is json
+            if ($request->isJson()) {
+                if ($response) {
+                    $response = $response->toArray();
+                    $response = json_encode($response);
+                } //End if
+            } //End if
         } catch (NoLocalUserException $e) {
             $response = $this->createLocalUser($credentials);
         } catch (Exception $e) {
