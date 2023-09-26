@@ -22,6 +22,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::prefix('user')->group(function () {
     Route::post('login', [App\Http\Controllers\ApiAuthController::class, 'actionLogin']);
+    Route::post('register', [App\Http\Controllers\ApiAuthController::class, 'actionRegister']);
     Route::post('/login/mfa', [App\Http\Controllers\ApiMFAController::class, 'actionValidateMFA']);
 
     Route::group(['middleware' => 'aws-cognito'], function() {

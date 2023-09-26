@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use Auth;
+use Response;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Symfony\Component\HttpFoundation\Request;
 
 use Ellaisys\Cognito\AwsCognitoClaim;
 use Ellaisys\Cognito\Auth\AuthenticatesUsers;
 use Ellaisys\Cognito\Auth\ChangePasswords;
-use Ellaisys\Cognito\Auth\RegisterMFA;
+use Ellaisys\Cognito\Auth\RegistersUsers;
+//use Ellaisys\Cognito\Auth\RegisterMFA;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -20,6 +22,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Routing\Controller as BaseController;
 
 use Exception;
+use Illuminate\Validation\ValidationException;
 use Ellaisys\Cognito\Exceptions\AwsCognitoException;
 use Ellaisys\Cognito\Exceptions\NoLocalUserException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -28,32 +31,50 @@ class ApiAuthController extends BaseController
 {
     use AuthenticatesUsers;
     use ChangePasswords;
-    use RegisterMFA;
+    use RegistersUsers;
+    //use RegisterMFA;
     
 
-    public function register(Request $request)
+    // public function register(Request $request)
+    // {
+    //     $this->validator($request->all())->validate();
+
+    //     $attributes = [];
+
+    //     $userFields = ['name', 'email'];
+
+    //     foreach($userFields as $userField) {
+
+    //         if ($request->$userField === null) {
+    //             throw new \Exception("The configured user field $userField is not provided in the request.");
+    //         }
+
+    //         $attributes[$userField] = $request->$userField;
+    //     }
+
+    //     app()->make(CognitoClient::class)->register($request->email, $request->password, $attributes);
+
+    //     event(new Registered($user = $this->create($request->all())));
+
+    //     return $this->registered($request, $user)
+    //         ?: redirect($this->redirectPath());
+    // } //Function ends
+
+
+    /**
+     * Action to register the user
+     */
+    public function actionRegister(Request $request)
     {
-        $this->validator($request->all())->validate();
-
-        $attributes = [];
-
-        $userFields = ['name', 'email'];
-
-        foreach($userFields as $userField) {
-
-            if ($request->$userField === null) {
-                throw new \Exception("The configured user field $userField is not provided in the request.");
-            }
-
-            $attributes[$userField] = $request->$userField;
-        }
-
-        app()->make(CognitoClient::class)->register($request->email, $request->password, $attributes);
-
-        event(new Registered($user = $this->create($request->all())));
-
-        return $this->registered($request, $user)
-            ?: redirect($this->redirectPath());
+        try {
+            return $this->register($request);
+        } catch(Exception $e) {
+            if ($e instanceof ValidationException) {
+                //json response with 422 error
+                return Response::json($e->errors(), 422);
+            } //End if
+            throw $e;
+        } //Try-catch ends
     } //Function ends
 
 
@@ -109,8 +130,8 @@ class ApiAuthController extends BaseController
             //Validate request
             $validator = Validator::make($request->all(), [
                 'email'    => 'required|email',
-                'password'  => 'string|min:8',
-                'new_password' => 'required|confirmed|min:8',
+                'password'  => 'required',
+                'new_password' => 'required|confirmed',
             ]);
             $validator->validate();
 

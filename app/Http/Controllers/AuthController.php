@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use Auth;
 use Illuminate\Support\Facades\Log;
-use Symfony\Component\HttpFoundation\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 use Ellaisys\Cognito\AwsCognitoClaim;
 use Ellaisys\Cognito\Auth\AuthenticatesUsers;
 use Ellaisys\Cognito\Auth\ChangePasswords;
 use Ellaisys\Cognito\Auth\RegisterMFA;
+
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -23,6 +25,8 @@ use Exception;
 use Ellaisys\Cognito\Exceptions\AwsCognitoException;
 use Ellaisys\Cognito\Exceptions\NoLocalUserException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
 
 class AuthController extends BaseController
 {
@@ -67,22 +71,27 @@ class AuthController extends BaseController
     {
         try {
             $user =  auth()->guard('api')->user();
-            $response = auth()->guard()->getRemoteUserData($user['email']);
-
-            //Check if request is json
-            if ($request->isJson()) {
+            if ($user) {
+                $response = auth()->guard()->getRemoteUserData($user['email']);
                 if ($response) {
-                    $response = $response->toArray();
-                    $response = json_encode($response);
+                    //Check if request is json
+                    if ($request->isJson()) {
+                        $response = $response->toArray();
+                        return new JsonResponse($response, 200);
+                    } else {
+                        return $response;
+                    } //End if
+                } else {
+                    throw new BadRequestHttpException('ERROR_COGNITO_USER_DETAILS_NOT_FOUND');
                 } //End if
+            } else {
+                throw new BadRequestHttpException('ERROR_COGNITO_USER_NOT_FOUND');
             } //End if
         } catch (NoLocalUserException $e) {
             $response = $this->createLocalUser($credentials);
         } catch (Exception $e) {
-            return $e;
-        }
-
-        return $response;
+            throw $e;
+        } //End try-catch
     } //Function ends
 
 
