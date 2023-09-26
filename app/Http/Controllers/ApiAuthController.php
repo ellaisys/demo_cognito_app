@@ -66,15 +66,7 @@ class ApiAuthController extends BaseController
      */
     public function actionRegister(Request $request)
     {
-        try {
-            return $this->register($request);
-        } catch(Exception $e) {
-            if ($e instanceof ValidationException) {
-                //json response with 422 error
-                return Response::json($e->errors(), 422);
-            } //End if
-            throw $e;
-        } //Try-catch ends
+        return $this->register($request);
     } //Function ends
 
 
