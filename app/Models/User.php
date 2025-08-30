@@ -13,6 +13,13 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
+     * The primary key for the model.
+     *
+     * @var string
+     */
+    protected $primaryKey = null;
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -42,4 +49,18 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    /**
+     * Create a new user instance.
+     *
+     * @param  array  $attributes
+     * @return void
+     */
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        $this->primaryKey = config('cognito.user_subject_uuid', 'id');
+    }
 }
