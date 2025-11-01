@@ -7,6 +7,8 @@ use Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
+use App\Models\User;
+
 use Ellaisys\Cognito\AwsCognitoClaim;
 use Ellaisys\Cognito\Auth\AuthenticatesUsers;
 use Ellaisys\Cognito\Auth\ChangePasswords;
@@ -32,33 +34,6 @@ class ApiAuthController extends BaseController
     use AuthenticatesUsers;
     use ChangePasswords;
     use RegistersUsers;
-    //use RegisterMFA;
-    
-
-    // public function register(Request $request)
-    // {
-    //     $this->validator($request->all())->validate();
-
-    //     $attributes = [];
-
-    //     $userFields = ['name', 'email'];
-
-    //     foreach($userFields as $userField) {
-
-    //         if ($request->$userField === null) {
-    //             throw new \Exception("The configured user field $userField is not provided in the request.");
-    //         }
-
-    //         $attributes[$userField] = $request->$userField;
-    //     }
-
-    //     app()->make(CognitoClient::class)->register($request->email, $request->password, $attributes);
-
-    //     event(new Registered($user = $this->create($request->all())));
-
-    //     return $this->registered($request, $user)
-    //         ?: redirect($this->redirectPath());
-    // } //Function ends
 
 
     /**
@@ -67,6 +42,11 @@ class ApiAuthController extends BaseController
     public function actionRegister(Request $request)
     {
         return $this->register($request);
+    } //Function ends
+
+    public function create (array $data)
+    {
+        return User::create($data);
     } //Function ends
 
 
@@ -127,29 +107,19 @@ class ApiAuthController extends BaseController
             ]);
             $validator->validate();
 
-            // Get Current User
-            $userCurrent = auth()->guard('web')->user();
-
             if ($this->reset($request)) {
-                return redirect(route('login'))->with('success', true);
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Password updated successfully'
+                ], 200);
             } else {
-				return redirect()->back()
-					->with('status', 'error')
-					->with('message', 'Password updated failed');
+				return response()->json([
+					'status' => 'error',
+					'message' => 'Password update failed'
+				], 400);
 			} //End if
         } catch(Exception $e) {
-			$message = 'Error sending the reset mail.';
-			if ($e instanceof ValidationException) {
-                $message = $e->errors();
-            } else if ($e instanceof CognitoIdentityProviderException) {
-				$message = $e->getAwsErrorMessage();
-			} else {
-                //Do nothing
-            } //End if
-
-			return redirect()->back()
-				->with('status', 'error')
-				->with('message', $message);
+            throw $e;
         } //Try-catch ends
     } //Function ends
 

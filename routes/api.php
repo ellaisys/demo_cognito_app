@@ -24,6 +24,7 @@ Route::prefix('user')->group(function () {
     Route::post('login', [App\Http\Controllers\ApiAuthController::class, 'actionLogin']);
     Route::post('register', [App\Http\Controllers\ApiAuthController::class, 'actionRegister']);
     Route::post('/login/mfa', [App\Http\Controllers\ApiMFAController::class, 'actionValidateMFA']);
+    Route::post('changepassword', [App\Http\Controllers\ApiAuthController::class, 'actionChangePassword']);
 
     Route::group(['middleware' => 'aws-cognito'], function() {
         Route::get('profile', [App\Http\Controllers\AuthController::class, 'getRemoteUser']);
